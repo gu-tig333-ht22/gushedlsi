@@ -39,7 +39,7 @@ class _SecondViewState extends State<SecondView> {
                       borderSide: BorderSide(color: Colors.black, width: 2)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 2)),
-                  hintText: "Vad mer behöver du göra?"),
+                  labelText: "Vad mer behöver du göra?"),
             ));
   }
 

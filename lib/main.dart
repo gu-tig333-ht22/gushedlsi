@@ -13,6 +13,7 @@ class Myapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MainView(),
     );
   }
@@ -43,22 +44,22 @@ class MainView extends StatelessWidget {
   }
 
   Widget _popMenu() {
-    return PopupMenuButton(
+    return Consumer<MyState>(
+        builder: (context, state, child) =>  PopupMenuButton(
         icon: Icon(Icons.more_vert),
+        onSelected: (value) {
+          Provider.of<MyState>(context, listen: false)
+                  .setFilter(value.toString());
+        },
         itemBuilder: (context) {
           return [
-            PopupMenuItem(
-              child: Text("All"),
-            ),
-            PopupMenuItem(
-              child: Text("Done"),
-            ),
-            PopupMenuItem(
-              child: Text("Undone"),
-            ),
+            PopupMenuItem(child: Text("All"), value: "all",),
+            PopupMenuItem(child: Text("Done"), value: "done",),
+            PopupMenuItem(child: Text("Undone"), value: "undone",),
           ];
-        });
+        }));
   }
+
 }
 
 class ToDoList extends StatelessWidget {
@@ -66,11 +67,17 @@ class ToDoList extends StatelessWidget {
 
   ToDoList(this.list);
 
-  Widget build(BuildContext context) {
-    return ListView(children: list.map((card) => _ToDoItem(card)).toList());
+  Widget build(BuildContext context) { //Bygger upp en list view 
+    return Consumer<MyState>(
+        builder: (context, state, child) => 
+        ListView(children: _filterList(list, state.filtervalue).map((card) => 
+        _ToDoItem(card)).toList()));
   }
 
   Widget _ToDoItem(card) {
+
+    
+
     return Consumer<MyState>(
         builder: (context, state, child) =>
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -90,6 +97,17 @@ class ToDoList extends StatelessWidget {
                       },
                       child: Icon(Icons.clear)))
             ]));
+
+  
+  }
+
+List<ToDoItem> _filterList(list, filterBy) {
+    if (filterBy == 'done')
+      return list.where((item) => item.done == true).toList();
+    if (filterBy == 'undone')
+      return list.where((item) => item.done == false).toList();
+    else return list;
+    
   }
 
   Widget text(card) {
@@ -105,7 +123,9 @@ class ToDoList extends StatelessWidget {
 
 class ToDoListView extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Consumer<MyState>(
+    return Consumer<MyState>( //Addar listan från state till listan i main tror jag 
         builder: (context, state, child) => ToDoList(state.list));
   }
+
+
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+
 class ToDoItem {
   String description;
   bool done = false;
@@ -12,6 +14,8 @@ class MyState extends ChangeNotifier {
   List<ToDoItem> _list =[];
 
   List<ToDoItem> get list => _list;
+
+  var filtervalue = "all";
 
   void addItem(ToDoItem card) {
     _list.add(card);
@@ -29,6 +33,9 @@ class MyState extends ChangeNotifier {
     notifyListeners();
    }
 
-
-
+  void setFilter(value) {
+    filtervalue = value;
+    notifyListeners();
+  }
 }
+
