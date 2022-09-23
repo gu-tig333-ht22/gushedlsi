@@ -36,7 +36,7 @@ class MainView extends StatelessWidget {
                 context, MaterialPageRoute(builder: (context) => SecondView()));
             if (testvar != null) {
               Provider.of<MyState>(context, listen: false)
-                  .addItem(ToDoItem(testvar));
+                  .addItem(testvar);
             }
           },
         ));
