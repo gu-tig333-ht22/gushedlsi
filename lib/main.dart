@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   var state = MyState();
+  state.updateList(); //Skapar lista i MyState från API
   runApp(ChangeNotifierProvider(create: (context) => state, child: Myapp()));
 }
 
@@ -24,19 +25,17 @@ class MainView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("TIG 333", style: TextStyle(color: Colors.black)),
+            title: Text("TIG 333 TODO", style: TextStyle(color: Colors.black)),
             backgroundColor: Colors.grey[400],
             actions: [_popMenu()]),
         body: ToDoListView(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () async {
-            //Tanken är att den här ska ta emot ett nytt todoitem
-            var testvar = await Navigator.push(
+            var inputText = await Navigator.push( 
                 context, MaterialPageRoute(builder: (context) => SecondView()));
-            if (testvar != null) {
-              Provider.of<MyState>(context, listen: false)
-                  .addItem(testvar);
+            if (inputText != null && inputText != "") { //Skapar endast ett item  
+              Provider.of<MyState>(context, listen: false).addItem(inputText);
             }
           },
         ));
@@ -45,21 +44,29 @@ class MainView extends StatelessWidget {
 
   Widget _popMenu() {
     return Consumer<MyState>(
-        builder: (context, state, child) =>  PopupMenuButton(
-        icon: Icon(Icons.more_vert),
-        onSelected: (value) {
-          Provider.of<MyState>(context, listen: false)
-                  .setFilter(value.toString());
-        },
-        itemBuilder: (context) {
-          return [
-            PopupMenuItem(child: Text("All"), value: "all",),
-            PopupMenuItem(child: Text("Done"), value: "done",),
-            PopupMenuItem(child: Text("Undone"), value: "undone",),
-          ];
-        }));
+        builder: (context, state, child) => PopupMenuButton(
+            icon: Icon(Icons.more_vert),
+            onSelected: (value) {
+              Provider.of<MyState>(context, listen: false)
+                  .setFilter(value);
+            },
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: Text("All"),
+                  value: "all",
+                ),
+                PopupMenuItem(
+                  child: Text("Done"),
+                  value: "done",
+                ),
+                PopupMenuItem(
+                  child: Text("Undone"),
+                  value: "undone",
+                ),
+              ];
+            }));
   }
-
 }
 
 class ToDoList extends StatelessWidget {
@@ -67,17 +74,16 @@ class ToDoList extends StatelessWidget {
 
   ToDoList(this.list);
 
-  Widget build(BuildContext context) { //Bygger upp en list view 
+  Widget build(BuildContext context) {
+    //Bygger upp en list view
     return Consumer<MyState>(
-        builder: (context, state, child) => 
-        ListView(children: _filterList(list, state.filtervalue).map((card) => 
-        _ToDoItem(card)).toList()));
+        builder: (context, state, child) => ListView(
+            children: _filterList(list, state.filtervalue)
+                .map((card) => _ToDoItem(card))
+                .toList()));
   }
 
-  Widget _ToDoItem(card) {
-
-    
-
+  Widget _ToDoItem(card) { //Utseendet på varje rad 
     return Consumer<MyState>(
         builder: (context, state, child) =>
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -95,22 +101,20 @@ class ToDoList extends StatelessWidget {
                         Provider.of<MyState>(context, listen: false)
                             .removeTodo(card);
                       },
-                      child: Icon(Icons.clear)))
+                      child: Icon(Icons.clear,)))
             ]));
-
-  
   }
 
-List<ToDoItem> _filterList(list, filterBy) {
+  List<ToDoItem> _filterList(list, filterBy) { //Funktion som returnerar en lista utifrån hur filtret är inställt 
     if (filterBy == 'done')
       return list.where((item) => item.done == true).toList();
     if (filterBy == 'undone')
       return list.where((item) => item.done == false).toList();
-    else return list;
-    
+    else
+      return list;
   }
 
-  Widget text(card) {
+  Widget text(card) { //Widget funktion som returnerar en text som är "nomal" elelr överstrucken
     if (card.done == true) {
       return Text(card.description,
           style: TextStyle(decoration: TextDecoration.lineThrough));
@@ -123,9 +127,8 @@ List<ToDoItem> _filterList(list, filterBy) {
 
 class ToDoListView extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Consumer<MyState>( //Addar listan från state till listan i main tror jag 
+    return Consumer<MyState>(
+        //Addar listan från state till listan i main tror jag
         builder: (context, state, child) => ToDoList(state.list));
   }
-
-
 }

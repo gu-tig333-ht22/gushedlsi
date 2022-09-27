@@ -5,7 +5,6 @@ import 'dart:convert';
 var apiKey = "9a4089a6-201d-42ae-a080-190dc2cbcf49";
 
 class ToDoItem {
-  var textdeco = "none"; 
   bool done = false;
   var description;
   var id;
@@ -26,7 +25,7 @@ class MyState extends ChangeNotifier {
   List<ToDoItem> get list => _list;
   var filtervalue = "all";
   
-  void addItem(text) async {
+  void addItem(input) async {
     var response = await http.post(
       Uri.parse(
           'https://todoapp-api.apps.k8s.gu.se/todos?key=$apiKey'),
@@ -34,47 +33,54 @@ class MyState extends ChangeNotifier {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'title': text.toString(),
+        'title': input.toString(),
         'done': false,
       }),
     );
-  _list = (json.decode(response.body) as List)
-          .map((hej) => ToDoItem.fromJson(hej))
-          .toList();
-
-    notifyListeners();
+  updateList();
   }
 
-  void check(ToDoItem card, val) async {
-    card.done = val;
-    var response = await http.put(
+  void check(ToDoItem todo, val) async {
+    await http.put(
       Uri.parse(
-          'https://todoapp-api.apps.k8s.gu.se/todos/${card.id}?key=$apiKey'),
+          'https://todoapp-api.apps.k8s.gu.se/todos/${todo.id}?key=$apiKey'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
         'done': val,
-        'title': card.description,
+        'title': todo.description,
       }));
-    notifyListeners();
+    updateList();
 
   }
 
   void removeTodo(ToDoItem todo) async {
-    _list.remove(todo);
-    var response = await http.delete(
+    await http.delete(
       Uri.parse(
           'https://todoapp-api.apps.k8s.gu.se/todos/${todo.id}?key=9a4089a6-201d-42ae-a080-190dc2cbcf49'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       });
-    print(todo.id);
-    notifyListeners();
+    updateList();
    }
 
   void setFilter(value) {
     filtervalue = value;
+    notifyListeners();
+  }
+
+  void updateList() async  {
+    var response = await http.get(
+      Uri.parse(
+          'https://todoapp-api.apps.k8s.gu.se/todos/?key=$apiKey'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },);
+    _list = (json.decode(response.body) as List)
+          .map((item) => ToDoItem.fromJson(item))
+          .toList();
+
     notifyListeners();
   }
 }
