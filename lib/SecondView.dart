@@ -9,7 +9,7 @@ class SecondView extends StatefulWidget {
 }
 class _SecondViewState extends State<SecondView> {
 
-  TextEditingController todoController = TextEditingController(); 
+  TextEditingController todoController = TextEditingController(); //Textfield input controller, används för att använda värdet som matas in 
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,7 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 
-  Widget todoInput() {
+  Widget todoInput() { //Textfield input 
     return Container(
             margin: EdgeInsets.only(left: 40.0, right: 40),
             child: TextField(
@@ -39,7 +39,7 @@ class _SecondViewState extends State<SecondView> {
                       borderSide: BorderSide(color: Colors.black, width: 2)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 2)),
-                  labelText: "Vad mer behöver du göra?"),
+                  labelText: "Vad behöver du göra?"),
             ));
   }
 
