@@ -79,27 +79,27 @@ class ToDoList extends StatelessWidget {
     return Consumer<MyState>(
         builder: (context, state, child) => ListView(
             children: _filterList(list, state.filtervalue)
-                .map((card) => _ToDoItem(card))
+                .map((item) => _ToDoItem(item))
                 .toList()));
   }
 
-  Widget _ToDoItem(card) { //Utseendet på varje rad 
+  Widget _ToDoItem(item) { //Utseendet på varje rad 
     return Consumer<MyState>(
         builder: (context, state, child) =>
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Checkbox(
-                value: card.done,
+                value: item.done,
                 onChanged: (val) {
-                  Provider.of<MyState>(context, listen: false).check(card, val);
+                  Provider.of<MyState>(context, listen: false).check(item, val);
                 },
               ),
-              text(card),
+              todoRowDescription(item),
               Container(
                   margin: EdgeInsets.only(right: 10),
                   child: ElevatedButton(
                       onPressed: () {
                         Provider.of<MyState>(context, listen: false)
-                            .removeTodo(card);
+                            .removeTodo(item);
                       },
                       child: Icon(Icons.clear,)))
             ]));
@@ -114,12 +114,12 @@ class ToDoList extends StatelessWidget {
       return list;
   }
 
-  Widget text(card) { //Widget funktion som returnerar en text som är "nomal" elelr överstrucken
-    if (card.done == true) {
-      return Text(card.description,
+  Widget todoRowDescription(item) { //Widget funktion som returnerar en text som är "nomal" elelr överstrucken
+    if (item.done == true) {
+      return Text(item.description,
           style: TextStyle(decoration: TextDecoration.lineThrough));
     } else {
-      return Text(card.description,
+      return Text(item.description,
           style: TextStyle(decoration: TextDecoration.none));
     }
   }

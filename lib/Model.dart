@@ -58,7 +58,7 @@ class MyState extends ChangeNotifier {
   void removeTodo(ToDoItem todo) async {
     await http.delete(
       Uri.parse(
-          'https://todoapp-api.apps.k8s.gu.se/todos/${todo.id}?key=9a4089a6-201d-42ae-a080-190dc2cbcf49'),
+          'https://todoapp-api.apps.k8s.gu.se/todos/${todo.id}?key=$apiKey'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       });
